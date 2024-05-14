@@ -1,5 +1,6 @@
 package com.example.milky_way_back.article.entity;
 
+import com.example.milky_way_back.Member.Entity.Member;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
+@Getter
+@Setter
 public class Apply {
 
     @Id
@@ -21,22 +24,23 @@ public class Apply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_no")
-    @Getter
-    @Setter
     private Article article;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_no", nullable = false)
-//    private Member member;
-
-    @Column(name="apply_name", nullable = false)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member memberId;
 
     @CreationTimestamp
     @Column(name="apply_date", updatable = false)
     private LocalDateTime applyDate;
 
     @Column(name="apply_result", updatable = true)
-    private String applyResult; //status
+    private boolean applyResult = true; //status
+
+    @Builder
+    public Apply(Article article, Member memberId) {
+        this.article = article;
+        this.memberId = memberId;
+    }
 
 }

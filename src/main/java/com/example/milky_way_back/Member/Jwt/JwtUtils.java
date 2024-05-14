@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Component /* todo 컴포넌트는 어떤 어노테이션인가? */
 @Slf4j
 public class JwtUtils {
-    public static final String ACCESS_HEADER = "ACCESS_HEADER";
+    public static final String ACCESS_HEADER = "Authorization";
     public static final String BEARER = "Bearer ";
 
     private final SecretKey secretKey;
