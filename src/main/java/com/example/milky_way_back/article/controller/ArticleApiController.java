@@ -68,7 +68,8 @@ public ResponseEntity<Article> addBoard(@AuthenticationPrincipal UserDetails use
     }
 
     @GetMapping("/posts/{id}")
-    public ResponseEntity<ArticleViewResponse> findBoard(@PathVariable long id){
+    public ResponseEntity<ArticleViewResponse> findBoard(@PathVariable long id
+    ){
         Article article = articleService.findById(id);
         return ResponseEntity.ok().body(new ArticleViewResponse(article));
     }
