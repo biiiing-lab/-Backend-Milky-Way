@@ -86,30 +86,4 @@ public ResponseEntity<Article> addBoard(@AuthenticationPrincipal UserDetails use
         Article updatedArticle = articleService.updateRecruit(id);
         return ResponseEntity.ok().body(new ArticleViewResponse(updatedArticle));
     }
-
-//    @PutMapping("/posts/done/{article-id}")
-//    public ResponseEntity<Article> updateArticle(@PathVariable long id, @RequestBody UpdateArticleRequest request) {
-//        Article articleToUpdate = articleService.findById(id);
-//
-//        if (articleToUpdate == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        // 요청에서 전달된 값을 엔티티에 설정
-//        articleToUpdate.setRecruit(request.getRecruit());
-//
-//        // 엔티티를 저장하고 업데이트된 엔티티 반환
-//        Article updatedArticle = articleService.save(articleToUpdate);
-//
-//        return ResponseEntity.ok(updatedArticle);
-//    }
-
-
-
-    //UPDATE
-//    @PutMapping("/api/boards/{id}")
-//    public ResponseEntity<Article> updateArticle(@PathVariable long id, @RequestBody UpdateRequest request) {
-//        Board updatedBoard = boardService.update(id, request);
-//        return ResponseEntity.ok().body(updatedBoard);
-//    } 수정 넣을건가요?
 }

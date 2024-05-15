@@ -5,6 +5,7 @@ import com.example.milky_way_back.Member.Jwt.JwtUtils;
 import com.example.milky_way_back.Member.Repository.MemberRepository;
 import com.example.milky_way_back.article.DTO.request.ApplyRequest;
 import com.example.milky_way_back.article.DTO.response.ApplyResponse;
+import com.example.milky_way_back.article.DTO.response.MyPageApplyResponse;
 import com.example.milky_way_back.article.entity.Apply;
 import com.example.milky_way_back.article.exception.ArticleNotFoundException;
 import com.example.milky_way_back.article.exception.MemberNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +68,39 @@ public class ApplyService {
 
     public List<ApplyResponse> findMemberNamesByArticleNo(Long article_no) {
         return applyRepository.findMemberNamesByArticleNo(article_no);
+    }
+
+    public List<MyPageApplyResponse> getAppliesByMemberId() {
+        // SecurityContext에서 인증 정보 가져오기
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
+        // 인증 정보에서 회원 ID 가져오기
+        String memberId = authentication.getName();
+
+        // 회원 ID로 회원을 조회
+        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
+        if (optionalMember.isPresent()) {
+            // 회원이 존재하는 경우, 해당 회원이 신청한 모든 apply를 조회
+            Member member = optionalMember.get();
+            List<Apply> applies = applyRepository.findByMemberId(member);
+
+            // Apply를 MyPageApplyResponse로 변환하여 리스트에 추가
+            List<MyPageApplyResponse> myPageApplies = new ArrayList<>();
+            for (Apply apply : applies) {
+                MyPageApplyResponse myPageApplyResponse = new MyPageApplyResponse();
+                myPageApplyResponse.setApply_no(apply.getApply_no());
+                myPageApplyResponse.setArticle(apply.getArticle());
+                myPageApplyResponse.setApplyDate(apply.getApplyDate());
+                myPageApplyResponse.setApplyResult(apply.isApplyResult());
+                // 나머지 필드도 필요에 따라 추가
+                myPageApplies.add(myPageApplyResponse);
+            }
+
+            return myPageApplies;
+        } else {
+            // 회원을 찾지 못한 경우에는 예외 처리 또는 다른 방법으로 처리
+            throw new MemberNotFoundException("Member not found with ID: " + memberId);
+        }
     }
 }

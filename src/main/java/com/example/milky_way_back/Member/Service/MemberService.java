@@ -1,7 +1,5 @@
 package com.example.milky_way_back.Member.Service;
 
-import antlr.Token;
-import com.auth0.jwt.interfaces.Claim;
 import com.example.milky_way_back.Member.Dto.*;
 import com.example.milky_way_back.Member.Entity.Auth;
 import com.example.milky_way_back.Member.Entity.Member;
@@ -15,8 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -126,5 +124,34 @@ public class MemberService {
 
         return ResponseEntity.status(HttpStatus.OK).body(new StatusResponse(HttpStatus.OK.value(), "로그아웃 성공"));
 
+    }
+
+    // 실제로는 회원 정보를 가져오는 로직이 구현되어야 합니다.
+    // Dummy method to simulate retrieving member info using memberId
+    public MyPageResponse getMemberInfo() {
+        // SecurityContext에서 인증 정보 가져오기
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
+        // 인증 정보에서 회원 ID 가져오기
+        String memberId = authentication.getName();
+
+        // 회원 ID로 회원 정보 조회
+        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            // 회원 정보를 MyPageResponse DTO로 매핑
+            MyPageResponse myPageResponse = new MyPageResponse();
+            myPageResponse.setMemberId(member.getMemberId());
+            myPageResponse.setMemberPassword(member.getMemberPassword());
+            myPageResponse.setMemberName(member.getMemberName());
+            myPageResponse.setMemberPhoneNum(member.getMemberPhoneNum());
+            myPageResponse.setMemberEmail(member.getMemberEmail());
+            return myPageResponse;
+        } else {
+            // 회원 정보가 없을 경우 처리
+            // 예: throw new EntityNotFoundException("회원 정보를 찾을 수 없습니다.");
+            return null;
+        }
     }
 }

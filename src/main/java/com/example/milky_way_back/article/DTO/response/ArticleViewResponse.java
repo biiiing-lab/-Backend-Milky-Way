@@ -28,7 +28,6 @@ public class ArticleViewResponse {
         this.article_no = article.getArticle_no();
         this.articleType = article.getArticleType();
         this.title = article.getTitle();
-
         this.member = article.getMemberId();
         this.content = article.getContent();
         this.metorTag = article.getMentorTag();

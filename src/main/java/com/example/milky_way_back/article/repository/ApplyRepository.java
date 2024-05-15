@@ -1,5 +1,6 @@
 package com.example.milky_way_back.article.repository;
 
+import com.example.milky_way_back.Member.Entity.Member;
 import com.example.milky_way_back.article.DTO.response.ApplyResponse;
 import com.example.milky_way_back.article.entity.Apply;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,7 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
             "FROM Apply a JOIN a.article ar JOIN a.memberId m " +
             "WHERE ar.article_no = ?1")
     List<ApplyResponse> findMemberNamesByArticleNo(Long articleNo);
+
+    List<Apply> findByMemberId(Member member);
+
 }
