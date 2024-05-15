@@ -15,5 +15,5 @@ public class MyPageApplyResponse {
     private Long apply_no;
     private Article article;
     private LocalDateTime applyDate;
-    private boolean applyResult;
+    private String applyResult;
 }

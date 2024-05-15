@@ -34,8 +34,8 @@ public class Apply {
     @Column(name="apply_date", updatable = false)
     private LocalDateTime applyDate;
 
-    @Column(name="apply_result", updatable = true)
-    private boolean applyResult = true; //status
+    @Column(name="apply_result", updatable = true, nullable = true)
+    private String applyResult = "신청"; //status
 
     @Builder
     public Apply(Article article, Member memberId) {

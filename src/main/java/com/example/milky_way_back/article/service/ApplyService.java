@@ -60,11 +60,6 @@ public class ApplyService {
     }
 
 
-    public void updateApplyResult(Long applyNo, boolean newStatus) {
-        Apply apply = applyRepository.findById(applyNo).orElseThrow(() -> new RuntimeException("Apply not found with id: " + applyNo));
-        apply.setApplyResult(newStatus);
-        applyRepository.save(apply);
-    }
 
     public List<ApplyResponse> findMemberNamesByArticleNo(Long article_no) {
         return applyRepository.findMemberNamesByArticleNo(article_no);
@@ -92,8 +87,8 @@ public class ApplyService {
                 myPageApplyResponse.setApply_no(apply.getApply_no());
                 myPageApplyResponse.setArticle(apply.getArticle());
                 myPageApplyResponse.setApplyDate(apply.getApplyDate());
-                myPageApplyResponse.setApplyResult(apply.isApplyResult());
-                // 나머지 필드도 필요에 따라 추가
+                myPageApplyResponse.setApplyResult(apply.getApplyResult());
+
                 myPageApplies.add(myPageApplyResponse);
             }
 

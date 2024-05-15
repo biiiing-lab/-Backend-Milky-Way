@@ -1,5 +1,6 @@
 package com.example.milky_way_back.Member.Controller;
 
+import com.example.milky_way_back.Member.Dto.MyPageRequest;
 import com.example.milky_way_back.Member.Dto.MyPageResponse;
 import com.example.milky_way_back.Member.Entity.Member;
 import com.example.milky_way_back.Member.Jwt.JwtUtils;
@@ -65,4 +66,15 @@ public class MyPageApiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while fetching my page data");
         }
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateMemberInfo(@RequestBody MyPageRequest myPageRequest) {
+        boolean updated = memberService.updateMemberInfo(myPageRequest);
+        if (updated) {
+            return ResponseEntity.ok("Member information updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member not found");
+        }
+    }
+
 }

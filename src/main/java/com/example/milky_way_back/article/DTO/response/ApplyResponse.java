@@ -17,5 +17,5 @@ public class ApplyResponse {
     private Long articleNo;
     private String memberName;
     private LocalDateTime applyDate;
-    private boolean applyResult;
+    private String applyResult;
 }

@@ -11,7 +11,6 @@ import lombok.Setter;
 @Setter
 public class MyPageResponse {
     private String memberId;
-    private String memberPassword;
     private String memberName;
     private String memberPhoneNum;
     private String memberEmail;
