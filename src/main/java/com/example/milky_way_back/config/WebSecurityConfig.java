@@ -1,8 +1,7 @@
 package com.example.milky_way_back.config;
 
-import com.example.milky_way_back.member.Jwt.JwtAuthenticationFilter;
-import com.example.milky_way_back.member.Jwt.TokenProvider;
-import com.example.milky_way_back.member.Repository.RefreshTokenRepository;
+import com.example.milky_way_back.member.jwt.JwtAuthenticationFilter;
+import com.example.milky_way_back.member.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @RequiredArgsConstructor

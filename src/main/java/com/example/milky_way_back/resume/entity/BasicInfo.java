@@ -1,6 +1,6 @@
 package com.example.milky_way_back.resume.entity;
 
-import com.example.milky_way_back.member.Entity.Member;
+import com.example.milky_way_back.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;

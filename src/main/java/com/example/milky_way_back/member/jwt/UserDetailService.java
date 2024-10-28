@@ -1,10 +1,8 @@
-package com.example.milky_way_back.member.Jwt;
+package com.example.milky_way_back.member.jwt;
 
-import com.example.milky_way_back.member.Entity.Member;
-import com.example.milky_way_back.member.Repository.MemberRepository;
+import com.example.milky_way_back.member.entity.Member;
+import com.example.milky_way_back.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,12 +27,10 @@ public class UserDetailService implements UserDetailsService {
     }
 
     private UserDetails createUserDetails(Member member) {
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getMemberRole().toString());
-
         return new User(
                 String.valueOf(member.getMemberId()),
                 member.getMemberPassword(),
-                Collections.singleton(grantedAuthority)
+                Collections.emptyList()
         );
     }
 }

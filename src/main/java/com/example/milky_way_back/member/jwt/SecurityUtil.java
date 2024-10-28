@@ -1,4 +1,4 @@
-package com.example.milky_way_back.member.Jwt;
+package com.example.milky_way_back.member.jwt;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

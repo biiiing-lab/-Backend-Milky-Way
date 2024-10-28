@@ -1,7 +1,7 @@
 package com.example.milky_way_back.article.DTO.response;
 
 import com.example.milky_way_back.article.DTO.MemberDTO;
-import com.example.milky_way_back.member.Entity.Member;
+import com.example.milky_way_back.member.entity.Member;
 import com.example.milky_way_back.article.entity.Article;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

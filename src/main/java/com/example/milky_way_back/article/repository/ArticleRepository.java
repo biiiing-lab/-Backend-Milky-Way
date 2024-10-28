@@ -1,6 +1,6 @@
 package com.example.milky_way_back.article.repository;
 
-import com.example.milky_way_back.member.Entity.Member;
+import com.example.milky_way_back.member.entity.Member;
 import com.example.milky_way_back.article.entity.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

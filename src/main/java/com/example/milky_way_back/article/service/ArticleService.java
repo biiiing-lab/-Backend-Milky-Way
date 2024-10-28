@@ -1,35 +1,26 @@
 package com.example.milky_way_back.article.service;
 
-import com.example.milky_way_back.article.DTO.request.LikeRequest;
+import com.example.milky_way_back.article.DTO.request.AddArticle;
 import com.example.milky_way_back.article.DTO.response.ArticleListView;
 import com.example.milky_way_back.article.DTO.response.ArticleViewResponse;
 import com.example.milky_way_back.article.DTO.response.LikeResponse;
-import com.example.milky_way_back.article.entity.Dibs;
-import com.example.milky_way_back.article.exception.ArticleNotFoundException;
-import com.example.milky_way_back.article.exception.DuplicateLikeException;
-import com.example.milky_way_back.article.exception.UnauthorizedException;
-import com.example.milky_way_back.article.repository.ApplyRepository;
-import com.example.milky_way_back.article.repository.DibsRepository;
-import com.example.milky_way_back.member.Entity.Member;
-import com.example.milky_way_back.member.Repository.MemberRepository;
-import com.example.milky_way_back.article.DTO.request.AddArticle;
 import com.example.milky_way_back.article.DTO.response.MyPageArticleResponse;
-import com.example.milky_way_back.article.exception.MemberNotFoundException;
 import com.example.milky_way_back.article.entity.Article;
+import com.example.milky_way_back.article.entity.Dibs;
+import com.example.milky_way_back.article.exception.*;
+import com.example.milky_way_back.article.repository.ApplyRepository;
 import com.example.milky_way_back.article.repository.ArticleRepository;
-import com.example.milky_way_back.member.Jwt.TokenProvider;
+import com.example.milky_way_back.article.repository.DibsRepository;
+import com.example.milky_way_back.member.entity.Member;
+import com.example.milky_way_back.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +32,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class ArticleService {
 
-    private final TokenProvider tokenProvider;
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final ApplyRepository applyRepository;
     private final DibsRepository dibsRepository;
 
-    public Article save(HttpServletRequest request, AddArticle addArticle) {
-//        // SecurityContext에서 인증 정보 가져오기
-//        SecurityContext securityContext = SecurityContextHolder.getContext();
-//        Authentication authentication = securityContext.getAuthentication();
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+    // 게시글 저장
+    public Article save(AddArticle addArticle) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // 인증 정보에서 회원 ID 가져오기
         String memberId = authentication.getName();
         // 회원 ID로 회원 정보 조회
@@ -70,15 +58,14 @@ public class ArticleService {
         }
     }
 
-    //게시글 조회
-    public Page<ArticleListView> findAll(HttpServletRequest request, Pageable pageable) {
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+    //게시글 목록 조회
+    public Page<ArticleListView> findAll(Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
         Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
         if (optionalMember.isPresent()) {
             Page<Article> articlePage = articleRepository.findAll(pageable);
-
             List<ArticleListView> articles = articlePage.getContent()
                     .stream()
                     .map(ArticleListView::new)
@@ -90,27 +77,9 @@ public class ArticleService {
         }
     }
 
-//    public ArticleViewResponse findById(long id) {
-//        // SecurityContext에서 인증 정보 가져오기
-//        SecurityContext securityContext = SecurityContextHolder.getContext();
-//        Authentication authentication = securityContext.getAuthentication();
-//
-//        // 인증 정보에서 회원 ID 가져오기
-//        String memberId = authentication.getName();
-//        Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
-//        if (optionalMember.isPresent()) {
-//            Article article = articleRepository.findById(id)
-//                    .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
-//
-//            return new ArticleViewResponse(article);
-//        } else {
-//            // 회원을 찾지 못한 경우에는 예외 처리 또는 다른 방법으로 처리
-//            throw new MemberNotFoundException("Member not found with ID: " + memberId);
-//        }
-    //    }
-    public ArticleViewResponse findById(HttpServletRequest request,long id) {
+    public ArticleViewResponse findById(Long id) {
         // 토큰에서 인증 정보 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
         // 회원 ID로 회원 정보 조회
@@ -130,7 +99,6 @@ public class ArticleService {
         // 사용자가 해당 게시물에 좋아요를 눌렀는지 확인
         boolean isLike = dibsRepository.findByArticleNoAndMemberNo(article, member).isPresent();
 
-
         // ArticleViewResponse 생성 및 isAuthor 설정
         ArticleViewResponse response = new ArticleViewResponse(article);
         response.setAuthor(isAuthor);
@@ -139,15 +107,18 @@ public class ArticleService {
 
         return response;
     }
+
+    // 게시글 삭제
     public void delete(long id){
         articleRepository.deleteById(id);
     }
-    public Article updateRecruit(HttpServletRequest request, long id) {
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+
+    // 게시글 수정
+    public Article updateRecruit(long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+        Article article = articleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found: " + id));
 
         if (article.getMemberId().getMemberId().equals(memberId)) {
             article.setRecruit(false);
@@ -157,9 +128,9 @@ public class ArticleService {
         }
     }
 
-    public List<MyPageArticleResponse> getArticlesByMemberId(HttpServletRequest request) {
+    public List<MyPageArticleResponse> getArticlesByMemberId() {
         // SecurityContext에서 인증 정보 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
         // 회원 ID로 회원을 조회
@@ -194,8 +165,8 @@ public class ArticleService {
         }
     }
     @Transactional
-    public LikeResponse likeArticle(HttpServletRequest request, Long articleId) {
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+    public LikeResponse likeArticle(Long articleId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
         // 회원 ID로 회원 정보 조회
         Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
@@ -229,5 +200,28 @@ public class ArticleService {
         response.setArticleNo(articleId);
         response.setLikeCount(article.getLikes());
         return response;
+    }
+
+    @Transactional
+    public void removeDibs(Long articleId) {
+        // 토큰에서 인증 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
+
+        // 회원 ID로 회원 정보 조회
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found with ID: " + memberId));
+
+        // 게시물 조회
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ArticleNotFoundException("Article not found with ID: " + articleId));
+
+        // 좋아요 정보 조회 및 삭제
+        Dibs dibs = dibsRepository.findByArticleNoAndMemberNo(article, member)
+                .orElseThrow(() -> new DibsNotFoundException("Like not found for this article"));
+
+        article.setLikes(article.getLikes() - 1);
+
+        dibsRepository.delete(dibs);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.milky_way_back.article.DTO.request;
 
 
-import com.example.milky_way_back.member.Entity.Member;
-import com.example.milky_way_back.article.entity.Apply;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

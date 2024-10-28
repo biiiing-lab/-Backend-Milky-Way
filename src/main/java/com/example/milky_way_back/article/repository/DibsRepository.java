@@ -2,7 +2,7 @@ package com.example.milky_way_back.article.repository;
 
 import com.example.milky_way_back.article.entity.Article;
 import com.example.milky_way_back.article.entity.Dibs;
-import com.example.milky_way_back.member.Entity.Member;
+import com.example.milky_way_back.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

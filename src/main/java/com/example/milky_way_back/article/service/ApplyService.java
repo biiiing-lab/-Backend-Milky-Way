@@ -5,15 +5,15 @@ import com.example.milky_way_back.article.DTO.MemberDTO;
 import com.example.milky_way_back.article.DTO.ArticleDTO;
 import com.example.milky_way_back.article.entity.Article;
 import com.example.milky_way_back.article.exception.*;
-import com.example.milky_way_back.member.Entity.Member;
-import com.example.milky_way_back.member.Repository.MemberRepository;
+import com.example.milky_way_back.member.entity.Member;
+import com.example.milky_way_back.member.repository.MemberRepository;
 import com.example.milky_way_back.article.DTO.request.ApplyRequest;
 import com.example.milky_way_back.article.DTO.response.ApplyResponse;
 import com.example.milky_way_back.article.DTO.response.MyPageApplyResponse;
 import com.example.milky_way_back.article.entity.Apply;
 import com.example.milky_way_back.article.repository.ApplyRepository;
 import com.example.milky_way_back.article.repository.ArticleRepository;
-import com.example.milky_way_back.member.Jwt.TokenProvider;
+import com.example.milky_way_back.member.jwt.TokenProvider;
 import com.example.milky_way_back.resume.dto.BasicInfoResponse;
 import com.example.milky_way_back.resume.dto.CareerDto;
 import com.example.milky_way_back.resume.dto.CertificationDto;
@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -49,13 +48,12 @@ public class ApplyService {
     private final BasicInfoRepository basicInfoRepository;
     private final CareerRepository careerRepository;
     private final CertificationRepository certificationRepository;
-    @Transactional
+
     //회원 번호와 게시글 번호를 받아 지원 정보를 처리하는 메서드
-    public Apply apply(HttpServletRequest request, Long articleNo, ApplyRequest applyRequest) {
-        // SecurityContext에서 인증 정보 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+    @Transactional
+    public Apply apply(Long articleNo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
-        // 회원 ID로 회원 정보 조회
         Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
 
         if (optionalMember.isPresent()) {
@@ -65,28 +63,69 @@ public class ApplyService {
             if (applyRepository.findByMemberAndArticleNo(member, articleNo).isPresent()) {
                 throw new DuplicateApplyException("Member has already applied to this article.");
             }
+
             // 게시글 정보 조회
             Article article = articleRepository.findById(articleNo)
                     .orElseThrow(() -> new ArticleNotFoundException("Article not found with ID: " + articleNo));
+
             // AddArticle에 회원 정보 설정
             Apply apply = Apply.builder()
                     .article(articleRepository.findById(articleNo).orElseThrow(() -> new ArticleNotFoundException("Article not found with ID: " + articleNo)))
                     .member(member) // Set the Member object directly
                     .build();
+
             // applyNow 필드 증가
             article.setApplyNow(article.getApplyNow() + 1);
+
             // 게시물 저장
             return applyRepository.save(apply);
+
         } else {
             // 회원을 찾지 못한 경우에는 예외 처리 또는 다른 방법으로 처리
             throw new MemberNotFoundException("Member not found with ID: " + memberId);
         }
     }
 
+    // 결과 지원 바꾸기
+    public String updateApplyResult(Long applyId, ChangeApplyResult requestBody) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
 
-    public List<ApplyResponse> findMemberNamesByArticleNo( HttpServletRequest request, Long articleNo) {
-        // 토큰에서 사용자 정보 추출
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        // 지원 정보 조회
+        Optional<Apply> optionalApply = applyRepository.findById(applyId);
+        if (!optionalApply.isPresent()) {
+            throw new ResourceNotFoundException("지원 정보를 찾을 수 없습니다.");
+        }
+
+        Apply apply = optionalApply.get();
+        Member author = apply.getArticle().getMemberId();
+
+        // 현재 로그인한 사용자와 게시판의 작성자가 일치하는지 확인
+        if (!author.getMemberId().equals(memberId)) {
+            throw new UnauthorizedException("작성자만 지원자의 합격을 결정할 수 있습니다.");
+        }
+
+        // 작성자와 일치하면, 작업 수행
+        String applyResult = requestBody.getApplyResult();
+
+        // apply 엔터티의 applyResult 필드를 직접 수정
+        apply.setApplyResult(applyResult);
+        applyRepository.save(apply);
+
+        // 만약 결과가 "합격"인 경우, Article 엔터티의 applyNow 필드를 1 증가
+        if ("합격".equals(applyResult)) {
+            Article article = apply.getArticle();
+            int currentApplyNow = article.getApplyNow();
+            article.setApplyNow(currentApplyNow + 1);
+            articleRepository.save(article);
+        }
+
+        return "applyResult updated successfully";
+    }
+
+
+    public List<ApplyResponse> findMemberNamesByArticleNo(Long articleNo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
         // 현재 사용자를 조회
@@ -126,8 +165,8 @@ public class ApplyService {
     }
 
 
-    public List<MyPageApplyResponse> getAppliesByMemberId(HttpServletRequest request) {
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+    public List<MyPageApplyResponse> getAppliesByMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
         // 회원 ID로 회원을 조회
@@ -145,7 +184,6 @@ public class ApplyService {
                 myPageApplyResponse.setApplyDate(apply.getApplyDate());
                 myPageApplyResponse.setApplyResult(apply.getApplyResult());
 
-// Apply의 Article 정보를 가져옴
                 Article article = articleRepository.findById(apply.getArticle().getArticle_no())
                         .orElseThrow(() -> new ArticleNotFoundException("Article not found with ID: " + apply.getArticle().getArticle_no()));
 
@@ -174,52 +212,15 @@ public class ApplyService {
         }
     }
 
-    public String updateApplyResult(HttpServletRequest request, Long applyId, ChangeApplyResult requestBody) {
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
-        String memberId = authentication.getName();
-
-        // 지원 정보 조회
-        Optional<Apply> optionalApply = applyRepository.findById(applyId);
-        if (!optionalApply.isPresent()) {
-            throw new ResourceNotFoundException("지원 정보를 찾을 수 없습니다.");
-        }
-
-        Apply apply = optionalApply.get();
-        Member author = apply.getArticle().getMemberId();
-
-        // 현재 로그인한 사용자와 게시판의 작성자가 일치하는지 확인
-        if (!author.getMemberId().equals(memberId)) {
-            throw new UnauthorizedException("작성자만 지원자의 합격을 결정할 수 있습니다.");
-        }
-
-        // 작성자와 일치하면, 작업 수행
-        String applyResult = requestBody.getApplyResult();
-
-        // apply 엔터티의 applyResult 필드를 직접 수정
-        apply.setApplyResult(applyResult);
-        applyRepository.save(apply);
-
-        // 만약 결과가 "합격"인 경우, Article 엔터티의 applyNow 필드를 1 증가
-        if ("합격".equals(applyResult)) {
-            Article article = apply.getArticle();
-            int currentApplyNow = article.getApplyNow();
-            article.setApplyNow(currentApplyNow + 1);
-            articleRepository.save(article);
-        }
-
-        return "applyResult updated successfully";
-    }
-
-    public ResponseEntity<BasicInfoResponse> findBasicInfo(HttpServletRequest request ,Long memberNo) {
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
-        String memberId = authentication.getName();
-
+    // 이력서 기본 정보 가져오기
+    public ResponseEntity<BasicInfoResponse> findBasicInfo(Long memberNo) {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(() -> new MemberNotFoundException("Member not found with ID: " + memberNo));
 
         BasicInfo basicInfos = basicInfoRepository.findByMember(member);
 
         BasicInfoResponse basicInfoResponse = basicInfos == null ?
+
                 BasicInfoResponse.builder()
                         .studentLocate(null)
                         .studentMajor(null)
@@ -228,6 +229,7 @@ public class ApplyService {
                         .memberName(member.getMemberName())
                         .memberPhoneNum(member.getMemberPhoneNum())
                         .build() :
+
                 BasicInfoResponse.builder()
                         .studentLocate(basicInfos.getStudentResumeLocate())
                         .studentMajor(basicInfos.getStudentResumeMajor())
@@ -240,7 +242,9 @@ public class ApplyService {
         return ResponseEntity.status(HttpStatus.OK).body(basicInfoResponse);
     }
 
-    public ResponseEntity<MemberInfoResponse> findCareerAndCertification(HttpServletRequest request,Long memberNo) {
+    // 이력서 정보 가져오기
+    public ResponseEntity<MemberInfoResponse> findCareerAndCertification(Long memberNo) {
+
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(() -> new MemberNotFoundException("Member not found with ID: " + memberNo));
 

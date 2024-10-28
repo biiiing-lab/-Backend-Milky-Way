@@ -1,4 +1,4 @@
-package com.example.milky_way_back.member.Entity;
+package com.example.milky_way_back.member.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 
 @Table(name="member")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @AllArgsConstructor
 @Builder
-@Setter
 public class Member {
 
     @Id
@@ -37,9 +37,9 @@ public class Member {
     @Column(name = "member_email")
     private String memberEmail;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "member_role")
-    private Role memberRole;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "member_role")
+//    private Role memberRole;
 
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")

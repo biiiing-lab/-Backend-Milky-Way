@@ -1,10 +1,8 @@
-package com.example.milky_way_back.member.Controller;
-
-
-import com.example.milky_way_back.member.Dto.*;
-import com.example.milky_way_back.member.Service.MemberService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+package com.example.milky_way_back.member;
+import com.example.milky_way_back.member.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @RestController
-@Tag(name = "회원 관련 API", description = "등록 및 확인, 토큰 관련 API")
 public class MemberController {
+
     private final MemberService memberService;
 
     // 회원가입
@@ -39,14 +37,14 @@ public class MemberController {
 
     // 리프레시 토큰
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(HttpServletRequest request) {
-        return ResponseEntity.ok(memberService.reissue(request));
+    public ResponseEntity<TokenDto> reissue(HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(memberService.reissue(httpServletRequest));
     }
 
     // 로그아웃
     @GetMapping("/logout")
-    public ResponseEntity<StatusResponse> logout(HttpServletRequest request) {
-        return memberService.logout(request);
+    public ResponseEntity<StatusResponse> logout() {
+        return memberService.logout();
     }
 
 }

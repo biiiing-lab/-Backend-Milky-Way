@@ -1,6 +1,6 @@
-package com.example.milky_way_back.member.Dto;
+package com.example.milky_way_back.member.mypage.dto;
 
-import com.example.milky_way_back.member.Entity.Role;
+import com.example.milky_way_back.member.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,12 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MyPageRequest {
-    private Long memberNo;
-    private String memberId;
-    private String newMemberId;
     private String memberPassword;
     private String memberName;
     private String memberPhoneNum;
     private String memberEmail;
-    private Role memberRole;
 }

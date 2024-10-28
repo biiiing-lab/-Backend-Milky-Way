@@ -1,12 +1,9 @@
-package com.example.milky_way_back.member.Dto;
+package com.example.milky_way_back.member.mypage.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
 public class MyPageResponse {

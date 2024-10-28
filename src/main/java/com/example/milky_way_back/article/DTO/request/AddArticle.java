@@ -1,6 +1,6 @@
 package com.example.milky_way_back.article.DTO.request;
 
-import com.example.milky_way_back.member.Entity.Member;
+import com.example.milky_way_back.member.entity.Member;
 import com.example.milky_way_back.article.entity.Article;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +23,7 @@ public class AddArticle {
     private boolean findMentor;
     private String conMethod;
     private String conInfo;
+
     public Article toEntity(Member member){
         return Article.builder()
                 .memberId(member)
