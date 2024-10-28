@@ -36,8 +36,6 @@ public class ArticleApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
     }
 
-
-    // todo 게시글 목록 조회
     //http://localhost:8080/posts/list?page=1&size=30
     //http://localhost:8080/posts/list?page={page-id}&size={size-id}
     @GetMapping("/posts/list")
@@ -72,7 +70,7 @@ public class ArticleApiController {
         return ResponseEntity.ok().build();
     }
 
-    // todo 게시글 수정
+
     @PutMapping("/posts/done/{id}")
     public ResponseEntity<Article> updateRecruit(@PathVariable long id) {
         Article updatedArticle = articleService.updateRecruit(id);
