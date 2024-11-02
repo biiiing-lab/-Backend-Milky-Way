@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ubuntu"
+PROJECT_ROOT="/home/ubuntu/app"
 JAR_FILE="$PROJECT_ROOT/Milky_Way_Back-0.0.1-SNAPSHOT.jar"
 
 # JAR 파일의 PID를 찾고 종료
