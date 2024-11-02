@@ -8,7 +8,7 @@ on:
 # 본인이 설정한 값을 여기서 채워넣는다.
 env:
   AWS_REGION: ap-northeast-2 # 서울
-  S3_BUCKET_NAME: milkyway-bucket #버킷 이름
+  S3_BUCKET_NAME: withmilkyway #버킷 이름
   CODE_DEPLOY_APPLICATION_NAME: milkyway #CodeDeploy 애플리케이션 이름
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: milkyway #CodeDeploy 배포 그룹 이름
 
