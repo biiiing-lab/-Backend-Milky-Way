@@ -4,7 +4,7 @@ cd /home/ubuntu/app  # 애플리케이션 디렉토리로 이동
 ./gradlew clean build -x test # 테스트 제외하고 빌드
 
 # 빌드가 성공했는지 확인
-if [ -f "build/libs/Milky_Way_Back-0.0.1-SNAPSHOT.jar" ]; then
+if [ -f "build/libs/Milky_Way_Back-0.0.1-SNAPSHOT-plain.jar" ]; then
     echo "Build successful, JAR file created."
 else
     echo "Build failed, JAR file not found." >&2
