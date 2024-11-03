@@ -13,17 +13,13 @@ permissions:
     pattern: "**"
     owner: ubuntu
     group: ubuntu
-
 hooks:
   AfterInstall:
     - location: scripts/stop.sh
-      timeout: 300
-      runas: ubuntu
-    - location: scripts/build.sh
-      timeout: 300
+      timeout: 60
       runas: ubuntu
   ApplicationStart:
     - location: scripts/start.sh
-      timeout: 300
+      timeout: 60
       runas: ubuntu
 
