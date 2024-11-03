@@ -12,7 +12,7 @@ java {
 }
 
 jar {
-    enabled = false
+    archiveBaseName.set('Milky_Way_Back')
 }
 
 configurations {
