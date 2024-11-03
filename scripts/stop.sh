@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT="/home/ubuntu/app"
-JAR_FILE="$PROJECT_ROOT/build/libs/Milky_Way_Back-0.0.1-SNAPSHOT-plain.jar"
+JAR_FILE="$PROJECT_ROOT/build/libs/Milky_Way_Back-0.0.1-SNAPSHOT.jar"
 
 PID=$(pgrep -f $JAR_FILE)
 

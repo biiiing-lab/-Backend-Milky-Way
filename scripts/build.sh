@@ -1,10 +1,10 @@
 #!/bin/bash
 
 cd /home/ubuntu/app  # 애플리케이션 디렉토리로 이동
-./gradlew clean build -x test # 테스트 제외하고 빌드
+./gradlew clean bootJar -x test # 테스트 제외하고 bootJar 작업 실행
 
 # 빌드가 성공했는지 확인
-if [ -f "build/libs/Milky_Way_Back-0.0.1-SNAPSHOT-plain.jar" ]; then
+if [ -f "build/libs/Milky_Way_Back-0.0.1-SNAPSHOT.jar" ]; then
     echo "Build successful, JAR file created."
 else
     echo "Build failed, JAR file not found." >&2
