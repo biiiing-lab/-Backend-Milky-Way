@@ -26,3 +26,4 @@ hooks:
     - location: /home/ubuntu/app/scripts/start.sh
       timeout: 300
       runas: ubuntu
+
