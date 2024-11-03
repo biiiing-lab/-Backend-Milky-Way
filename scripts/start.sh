@@ -3,15 +3,17 @@
 PROJECT_ROOT="/home/ubuntu/app"
 JAR_FILE="$PROJECT_ROOT/build/libs/Milky_Way_Back-0.0.1-SNAPSHOT.jar"
 
- APP_LOG="$PROJECT_ROOT/application.log"
- ERROR_LOG="$PROJECT_ROOT/error.log"
- DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
+APP_LOG="$PROJECT_ROOT/application.log"
+ERROR_LOG="$PROJECT_ROOT/error.log"
+DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
- TIME_NOW=$(date +%c)
+TIME_NOW=$(date +%c)
 
- # JAR 파일 실행
- echo "$TIME_NOW > $JAR_FILE 파일 실행" >> $DEPLOY_LOG
- nohup java -jar $JAR_FILE > $APP_LOG 2> $ERROR_LOG &
-
- CURRENT_PID=$!
- echo "$TIME_NOW > 실행된 프로세스 아이디 $CURRENT_PID 입니다." >> $DEPLOY_LOG
+if [ -f "$JAR_FILE" ]; then
+    echo "$TIME_NOW > Starting $JAR_FILE" >> $DEPLOY_LOG
+    nohup java -jar $JAR_FILE > $APP_LOG 2> $ERROR_LOG &
+    CURRENT_PID=$!
+    echo "$TIME_NOW > Started process with PID $CURRENT_PID" >> $DEPLOY_LOG
+else
+    echo "$TIME_NOW > Error: $JAR_FILE not found" >> $DEPLOY_LOG
+fi
