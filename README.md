@@ -7,8 +7,6 @@
 
 <br>
 
-(작동 영상 첨부)
-
 밀키웨이(Milky Way)는 학습 교류 및 팀원 구인구직, 교내 활동 활성화를 위한 학과 연합 스터디 및 프로젝트 매칭 플랫폼입니다. <br>
 
  활성화 된 학업 분위기에서 다양한 학과 및 사람들을 만나 인사이트를 얻은 후 사회로 진출할 준비를 하는 학생들, 미래의 인재가 될 청춘들을 ‘별’이라고 지칭하였습니다. 다양한 ‘별’들이 모여 ‘은하수’ 라는 사회를 이루기 때문에 밀키웨이(Milky Way) 라는 이름을 붙였습니다. <br>
@@ -35,13 +33,17 @@
 - AWS EC2 
 - Github Action
 - Nginx
-(프로젝트 아키텍처 사진 추가)
+
+![밀키웨이_아키텍처_구조도](https://github.com/user-attachments/assets/5c5b65bb-3be8-4762-8eb8-2a6843f4a821)
 
 <br>
 
 🧺 **데이터베이스 / ERD**
 - MySQL
-- 1차 개발 ERD (사진 첨부)
+- 1차 개발 ERD
+
+![Milky-Way (1)](https://github.com/user-attachments/assets/c66419ef-007c-4be4-bb5b-6bab17d71be8)
+
 
 <br>
 
